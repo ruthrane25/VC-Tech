@@ -1,7 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Action, Actions, PageServerLoad } from './$types'
 import bcrypt from 'bcrypt'
-
 import { db } from '$lib/database'
 
 // // using an enum for user roles to avoid typos
@@ -9,6 +8,10 @@ import { db } from '$lib/database'
 enum Roles {
   ADMIN = 'ADMIN',
   USER = 'USER',
+  OPERATION = 'OPERATION',
+  WAREHOUSE = 'WAREHOUSE',
+  MATERIALPROCURE = 'MATERIALPROCURE',
+  ACCOUNTANT = 'ACCOUNTANT'
 }
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -24,6 +27,18 @@ const register: Action = async ({ request }) => {
   const password = data.get('password')
   const email = data.get('email')
   const phone = data.get('phoneNo')
+  const role = data.get('role')
+
+  // Server-side validation functions
+  const validateEmail = (email: string) => {
+    const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return re.test(email);
+  }
+
+   const validatePhone = (phone: string) => {
+    const re = /^(\+?\d{1,3}[\s-]?)?\d{10}$/;
+    return re.test(phone);
+  }
     
 
 //mention the fields
@@ -31,11 +46,16 @@ const register: Action = async ({ request }) => {
       typeof username !== 'string' ||
       typeof password !== 'string' ||
       typeof email !== 'string' ||
-      typeof phone !== 'string'||
+      typeof phone !== 'string' ||
+      typeof role !== 'string' ||
       !username ||
       !password ||
       !email ||
-      !phone
+      !phone ||
+      !role ||
+      !(role in Roles) ||
+      !validateEmail(email) ||
+      !validatePhone(phone)
   ) {
     return fail(400, { invalid: true })
   }
@@ -76,7 +96,7 @@ const register: Action = async ({ request }) => {
       phoneNo: phone,
 
       userAuthToken: crypto.randomUUID(),
-      role: { connect: { name: Roles.USER } },
+      role: { connect: { name: role as Roles } },
     },
   })
 

@@ -9,6 +9,8 @@
 
   export let form: ActionData;
 
+  let emailValid = true;
+  let phoneValid = true;
   let showPassword = false;
 
   const slides = [
@@ -27,12 +29,35 @@
       loop: true,
     });
   });
+
+    const roles = [
+    { value: 'ACCOUNTANT', label: 'Accountant' },
+    { value: 'MATERIALPROCURE', label: 'Material Procure' },
+    { value: 'WAREHOUSE', label: 'Warehouse' },
+    { value: 'OPERATION', label: 'Operation' },
+    { value: 'USER', label: 'User' },
+    { value: 'ADMIN', label: 'Admin' },
+  ];
+
+    function validateEmail(email: string): boolean {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(email);
+  }
+
+  function validatePhone(phone: string): boolean {
+    // This regex allows for various international formats
+    const re = /^(\+\d{1,3}[- ]?)?\d{10,14}$/;
+    return re.test(phone.replace(/\s+/g, ''));
+  }
+
+
+
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
   <div class="flex bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-5xl">
     <!-- Left side with Swiper -->
-    <div class="hidden lg:block w-1/2 bg-sky-700 relative overflow-hidden">
+    <div class="hidden lg:block w-2/5 bg-sky-700 relative overflow-hidden">
       <div class="absolute inset-0 bg-sky-500 opacity-50"></div>
       <div class="swiper-container w-full h-full z-10">
         <div class="swiper-wrapper">
@@ -51,14 +76,14 @@
     </div>
 
     <!-- Right side with registration form -->
-    <div class="w-full lg:w-1/2 flex flex-col justify-center p-8 lg:p-12">
+    <div class="w-full lg:w-3/5 flex flex-col justify-center p-5 lg:p-7">
       <div class="text-center mb-8">
         <img src="vc2-Photoroom.png" alt="Company Logo" class="h-16 mx-auto mb-4">
         <h1 class="text-3xl font-bold text-gray-900">Create an Account</h1>
         <p class="text-gray-600 mt-2">Join our community today</p>
       </div>
 
-      <form action="?/register" method="POST" use:enhance class="space-y-4">
+      <form action="?/register" method="POST" use:enhance class="space-y-3">
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
           <input 
@@ -78,21 +103,36 @@
             name="email" 
             type="email" 
             required 
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             placeholder="Enter your email"
+            on:blur={(e) => emailValid = validateEmail(e.currentTarget.value)}
           />
+          {#if !emailValid}
+            <p class="text-red-500 text-xs mt-1">Please enter a valid email address</p>
+          {/if}
         </div>
 
         <div>
-          <label for="phoneNo" class="block text-sm font-medium text-gray-700 mb-1">Contact No</label>
-          <input 
-            id="phoneNo" 
-            name="phoneNo" 
-            type="tel" 
-            required 
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-            placeholder="Enter your contact number"
-          />
+          <label for="phoneNo" class="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+          <div class="flex">
+            <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+              +91
+            </span>
+            <input 
+              id="phoneNo" 
+              name="phoneNo" 
+              type="tel" 
+              required 
+              class="w-full px-3 py-2 text-sm rounded-r-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              placeholder="10-digit mobile number"
+              maxlength="10"
+              pattern="[6-9]\d{9}"
+              on:blur={(e) => phoneValid = validatePhone(e.currentTarget.value)}
+            />
+          </div>
+          {#if !phoneValid}
+            <p class="text-red-500 text-xs mt-1">Please enter a valid 10-digit mobile number</p>
+          {/if}
         </div>
 
         <div>
@@ -125,6 +165,20 @@
           </div>
         </div>
 
+<div>
+  <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+  <select 
+    id="role" 
+    name="role" 
+    required 
+    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+  >
+    {#each roles as role}
+      <option value={role.value}>{role.label}</option>
+    {/each}
+  </select>
+</div>
+
         {#if form?.user}
           <p class="text-red-500 text-sm">Username is taken.</p>
         {/if}
@@ -138,6 +192,7 @@
         <button 
           type="submit" 
           class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+          disabled={!emailValid || !phoneValid}
         >
           Register
         </button>

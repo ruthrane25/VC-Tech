@@ -1,12 +1,20 @@
-<!-- admin/user/+page.svelte -->
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
+   import type { PageServerLoad } from "./$types";
 
   export let data: PageData;
 
+
+
+  
+  export const load = (({  }) => {
+    
+  }) satisfies PageServerLoad;
+
   $: ({ pendingUsers, approvedUsers } = data);
+
 
   let activeTab = 'pending';
 
@@ -14,7 +22,7 @@
     activeTab = tab;
   }
 
-  function formatDate(date: string) {
+  function formatDate(date: Date) {
     return new Date(date).toLocaleString();
   }
 </script>
@@ -49,6 +57,7 @@
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile No</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Updated At</th>
@@ -60,9 +69,10 @@
               <tr transition:fade="{{ duration: 300 }}">
                 <td class="px-6 py-4 whitespace-nowrap">{user.username}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{user.phoneNo}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{user.role.name}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">{user.createdAt}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">{user.updatedAt}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">{formatDate(user.createdAt)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">{formatDate(user.updatedAt)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <form method="POST" action="?/approve" use:enhance class="inline-block mr-2">
                     <input type="hidden" name="userId" value={user.id} />
@@ -89,6 +99,7 @@
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile No</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Updated At</th>
@@ -99,9 +110,10 @@
               <tr>
                 <td class="px-6 py-4 whitespace-nowrap">{user.username}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{user.phoneNo}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{user.role.name}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">{user.createdAt}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">{user.updatedAt}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">{formatDate(user.createdAt)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">{formatDate(user.updatedAt)}</td>
               </tr>
             {/each}
           </tbody>
