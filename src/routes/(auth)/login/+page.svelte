@@ -8,10 +8,12 @@
   import { applyAction, enhance } from '$app/forms';
   import '$lib/styles/app.css'
   import { invalidateAll } from '$app/navigation';
+  import { fade } from 'svelte/transition';
 
   export let form: ActionData;
 
   let showPassword = false;
+  let loading = false;
 
   const slides = [
     { src: "1.svg", title: "Innovative Security", description: "Cutting-edge protection for your digital world" },
@@ -29,6 +31,18 @@
       loop: true,
     });
   });
+
+  const handleSubmit = () => {
+    loading = true;
+    return async ({ result }) => {
+      // Simulate a delay to show the loader (remove this in production)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      invalidateAll();
+      await applyAction(result);
+      loading = false;
+    };
+  };
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -53,7 +67,7 @@
     </div>
 
     <!-- Right side with login form -->
-    <div class="w-full lg:w-1/2 flex flex-col justify-center p-8 lg:p-12">
+    <div class="w-full lg:w-1/2 flex flex-col justify-center p-8 lg:p-12 relative">
       <div class="text-center mb-8">
         <img src="vc2-Photoroom.png" alt="Company Logo" class="h-16 mx-auto mb-4">
         <h1 class="text-3xl font-bold text-gray-900">Welcome Back</h1>
@@ -63,12 +77,7 @@
       <form 
         action="?/login" 
         method="POST" 
-        use:enhance={() => {
-          return async ({ result }) => {
-            invalidateAll();
-            await applyAction(result);
-          };
-        }}
+        use:enhance={handleSubmit}
         class="space-y-6"
       >
         <div>
@@ -136,8 +145,9 @@
         <button 
           type="submit" 
           class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+          disabled={loading}
         >
-          Sign In
+          {loading ? 'Signing In...' : 'Sign In'}
         </button>
       </form>
 
@@ -148,6 +158,15 @@
     </div>
   </div>
 </div>
+
+{#if loading}
+  <div transition:fade="{{ duration: 200 }}" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+    <div class="loader-container p-8 bg-white rounded-lg shadow-xl">
+      <div class="loader"></div>
+      <p class="mt-4 text-gray-700 font-semibold">Signing In...</p>
+    </div>
+  </div>
+{/if}
 
 <style>
   :global(body) {
@@ -162,5 +181,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { SalesOrder } from '$lib/types';
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { fade } from 'svelte/transition';
     import { Cog, CheckCircle, AlertCircle, XCircle } from 'lucide-svelte';
@@ -18,6 +18,7 @@
     ];
     let isColumnSelectorOpen = false;
     let isDownloadMenuOpen = false;
+    let isLoading = false;
 
     $: {
         filteredOrders = orders.filter(order => 
@@ -28,12 +29,16 @@
 
     const dispatch = createEventDispatcher();
    
-    function handleRowClick(order: SalesOrder) {
-        goto(`/salesOrder/${order.salesorder_id}`);
+    async function handleRowClick(order: SalesOrder) {
+        isLoading = true;
+        await goto(`/salesOrder/${order.salesorder_id}`);
+        isLoading = false;
     }
 
-    function changePage(newPage: number) {
-        goto(`?page=${newPage}`);
+    async function changePage(newPage: number) {
+        isLoading = true;
+        await goto(`?page=${newPage}`);
+        isLoading = false;
     }
 
     function formatCurrency(amount: number): string {
@@ -61,6 +66,10 @@
         console.log(`Download ${type} clicked`);
         isDownloadMenuOpen = false;
     }
+
+    onMount(() => {
+        isLoading = false;
+    });
 </script>
 
 <div class="container mx-auto px-4 py-8">
@@ -149,7 +158,7 @@
                                         order[column] === 'open' ? 'bg-green-100 text-green-800' : 
                                         order[column] === 'closed' ? 'bg-gray-100 text-gray-800' : 
                                         'bg-yellow-100 text-yellow-800'}">
-                                        {order[column]}
+                                        {order[column] === 'open' ? 'confirmed' : order[column]}
                                     </span>
                                 {:else if column === 'invoiced_status' || column === 'payment_status'}
                                     <div class="relative inline-block group">
@@ -231,6 +240,12 @@
             </div>
         </div>
     </div>
+
+    {#if isLoading}
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+            <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+    {/if}
 </div>
 
 <style>
