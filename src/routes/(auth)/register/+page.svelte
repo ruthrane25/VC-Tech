@@ -12,6 +12,7 @@
   let emailValid = true;
   let phoneValid = true;
   let showPassword = false;
+  
 
   const slides = [
     { src: "1.svg", title: "Join Our Community", description: "Start your journey with us today" },
@@ -43,15 +44,6 @@
     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return re.test(email);
   }
-
-  function validatePhone(phone: string): boolean {
-    // This regex allows for various international formats
-    const re = /^(\+\d{1,3}[- ]?)?\d{10,14}$/;
-    return re.test(phone.replace(/\s+/g, ''));
-  }
-
-
-
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -80,7 +72,6 @@
       <div class="text-center mb-8">
         <img src="vc2-Photoroom.png" alt="Company Logo" class="h-16 mx-auto mb-4">
         <h1 class="text-3xl font-bold text-gray-900">Create an Account</h1>
-        <p class="text-gray-600 mt-2">Join our community today</p>
       </div>
 
       <form action="?/register" method="POST" use:enhance class="space-y-3">
@@ -126,8 +117,6 @@
               class="w-full px-3 py-2 text-sm rounded-r-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
               placeholder="10-digit mobile number"
               maxlength="10"
-              pattern="[6-9]\d{9}"
-              on:blur={(e) => phoneValid = validatePhone(e.currentTarget.value)}
             />
           </div>
           {#if !phoneValid}
