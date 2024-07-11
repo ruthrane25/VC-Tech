@@ -19,8 +19,9 @@
   $: currentPage = $page.url.pathname.split('/')[1] || 'Home';
 
   const menuItems = [
+    { icon: CheckSquare, label: 'Dashboard', href: '/' },
     { icon: Briefcase, label: 'Sales Orders', href: '/salesOrder' },
-    { icon: CheckSquare, label: 'Tasks', href: '/tasks' },
+  
     { icon: Calendar, label: 'Calendar', href: '/calendar' },
     { icon: BarChart2, label: 'Reports', href: '/reports' },
   ];
