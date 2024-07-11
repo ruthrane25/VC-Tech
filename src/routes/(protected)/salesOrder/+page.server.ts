@@ -22,10 +22,15 @@ async function getToken(fetch: typeof globalThis.fetch): Promise<string> {
 }
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
-      // redirect user if not logged in
+        // redirect user if not logged in
         if (!locals.user) {
-            redirect(302, '/login')
-        }
+            throw redirect(302, new URL('/login', 'http://localhost:5173').toString());
+    }
+    
+         if (!locals.user) {
+            throw redirect(302, new URL('/login', 'https://vc-tech.vercel.app/').toString());
+    }
+    
     const token = await getToken(fetch);
 
     const response = await fetch(`https://www.zohoapis.in/books/v3/salesorders?organization_id=60005679410`, {

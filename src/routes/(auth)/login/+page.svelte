@@ -36,7 +36,7 @@
     loading = true;
     return async ({ result }) => {
       // Simulate a delay to show the loader (remove this in production)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
       invalidateAll();
       await applyAction(result);

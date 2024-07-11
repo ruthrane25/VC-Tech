@@ -34,11 +34,6 @@ const register: Action = async ({ request }) => {
     const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return re.test(email);
   }
-
-   const validatePhone = (phone: string) => {
-    const re = /^(\+?\d{1,3}[\s-]?)?\d{10}$/;
-    return re.test(phone);
-  }
     
 
 //mention the fields
@@ -54,8 +49,7 @@ const register: Action = async ({ request }) => {
       !phone ||
       !role ||
       !(role in Roles) ||
-      !validateEmail(email) ||
-      !validatePhone(phone)
+      !validateEmail(email)
   ) {
     return fail(400, { invalid: true })
   }

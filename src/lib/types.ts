@@ -38,6 +38,13 @@ export interface SalesOrder {
     delivery_method: string | null;
     paid_status: string | null;
     documents: Document[];
+    custom_fields: CustomField[];
+    rounding_adjustment?: number;
+}
+
+export interface CustomField {
+    label: string;
+    value: string;
 }
 
 export interface CompanyDetails {
@@ -69,6 +76,9 @@ export interface ContactPerson {
 }
 
 export interface LineItem {
+	id: number;
+	status: string;
+	amount: number;
     line_item_id: string;
     name: string;
     description: string;
@@ -104,7 +114,6 @@ export interface User {
     email: string;
     isApproved: boolean;
     createdAt: Date;
-    status: 'APPROVED' | 'DECLINED' | 'PENDING';
 }
 
 export interface PageData {

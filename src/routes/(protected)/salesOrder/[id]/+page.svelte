@@ -2,6 +2,20 @@
     import '$lib/styles/app.css';
     import type { PageData } from './$types';
     import { onMount } from 'svelte';
+    import { fade } from 'svelte/transition';
+    import StageUpdateModal from '$lib/components/StageUpdateModal.svelte';
+
+        let showPopup = false;
+
+         let showStageUpdateModal = false;
+
+ function toggleStageUpdateModal() {
+    showStageUpdateModal = !showStageUpdateModal;
+  }
+
+    export function togglePopup() {
+        showPopup = !showPopup;
+    }
 
     export let data: PageData;
 
@@ -67,10 +81,52 @@
                 </div>
                 <div class="flex space-x-4">
                     <div class="{getStatusColor('open')} px-4 py-2 rounded-full font-semibold shadow-lg">
-                        CONFIRMED
+                        {salesOrder.order_status}
                     </div>
                     <div class="{getStatusColor('pending')} px-4 py-2 rounded-full font-semibold shadow-lg">
-                        OPS STATUS
+                        <button class="" on:click={toggleStageUpdateModal}>
+                            Current Stage
+                        </button>
+<!-- 
+    {#if showPopup}
+        <div
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+            role="dialog"
+            aria-modal="true"
+            >
+            <div
+            class="relative top-20 mx-auto p-5 border w-11/12 shadow-lg rounded-md bg-white"
+            transition:fade
+            >
+            <button
+                class="absolute top-2 right-2 bg-red-500 text-white rounded-sm hover:bg-red-600 focus:outline-none"
+                on:click={togglePopup}
+                aria-label="Close popup"
+            >
+                <span class="w-6 h-6 flex items-center justify-center">
+                ✕
+                </span>
+            </button>
+            <div class="mt-3 text-center">
+                <div class="mt-2 px-7 py-3">
+                <Stages
+                {salesOrder}
+                />
+                </div>
+            </div>
+            </div>
+        </div>
+
+       
+    {/if} -->
+
+    {#if showStageUpdateModal}
+  <StageUpdateModal 
+    {salesOrder} 
+    on:close={toggleStageUpdateModal}
+  />
+{/if}
+    
                     </div>
                 </div>
             </div>
@@ -172,3 +228,4 @@
         <p class="text-center">No sales order data available.</p>
     {/if}
 </div>
+<svelte:window on:keydown={(e) => e.key === 'Escape' && toggleStageUpdateModal()} />

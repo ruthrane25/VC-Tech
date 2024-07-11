@@ -18,7 +18,7 @@ declare global {
 				email: string;
 				createdAt: Date;
 				role: string;
-				status: string;
+				image: string;
 			}
 		}
 		// interface PageState {}

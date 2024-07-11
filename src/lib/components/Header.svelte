@@ -2,8 +2,11 @@
  import '../styles/app.css'
  import { page } from '$app/stores';
  import { Search, Bell, LogOut } from 'lucide-svelte';
-	import { applyAction, enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
+ import { applyAction, enhance } from '$app/forms';
+ import { invalidateAll } from '$app/navigation';
+
+ $: user = $page.data.user;
+
 </script>
 
 <header class="bg-gray-300 shadow-sm z-10">
@@ -23,7 +26,7 @@
         <div class="ml-3 relative">
           <button type="button" class="flex items-center max-w-xs rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300">
             <span class="sr-only">Open user menu</span>
-            <img class="h-8 w-8 rounded-full" src="https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg" alt="">
+            <img class="h-8 w-8 rounded-full" src="data:image;base64,{user.image}" alt="">
           </button>
         </div>
         <div class="ml-2 relative">
